@@ -1,0 +1,25 @@
+apiVersion: cis.f5.com/v1
+kind: VirtualServer
+metadata:
+  name: storage-f5dev.vnpt.vn
+  labels:
+    f5cr: "true"
+  namespace: minio-f5-dev
+spec:
+  host: storage-f5dev.vnpt.vn
+  tlsProfileName: tls-minio-dev  # --> This will attach reencrypt-tls TLSProfile
+  virtualServerAddress: "10.163.15.106"
+  httpTraffic: redirect
+  snat: /Common/k8s
+  iRules:
+    - /Common/lab.irule
+  pools:
+    - path: /
+      service: minio-svc
+      servicePort: 9000
+      monitor:
+        type: http
+        send: "HEAD /minio/health/ready HTTP/1.0"
+        recv: "HTTP/1.0 200 OK"
+        interval: 5
+        timeout: 16
