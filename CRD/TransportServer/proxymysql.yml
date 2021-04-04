@@ -1,0 +1,20 @@
+apiVersion: "cis.f5.com/v1"
+kind: TransportServer
+metadata:
+  labels:
+    f5cr: "true"
+  name: mysqlproxy
+  namespace: pxc-cluster1
+spec:
+  virtualServerAddress: "10.163.15.100"
+  virtualServerPort: 3306
+  virtualServerName: mysqlproxy
+  mode: performance
+  snat: /Common/k8s
+  pool:
+    service:  cluster1-proxysql
+    servicePort: 3306
+    monitor:
+      type: tcp
+      interval: 10
+      timeout: 31
